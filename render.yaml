@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: djangoproject
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: djangoproject-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        value: ""  # Fill in with your frontend URL
+
+databases:
+  - name: djangoproject-db
+    databaseName: djangoproject
+    user: djangoproject
+    plan: free

@@ -6,5 +6,6 @@ __pycache__/
 venv/
 *.sqlite3
 media/
-.idea/        # PyCharm
+staticfiles/
+.idea/
 *.log

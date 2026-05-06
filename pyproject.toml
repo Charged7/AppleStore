@@ -2,7 +2,7 @@
 name = "djangoproject"
 version = "0.1.0"
 description = "Add your description here"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "django>=6.0.5",
     "django-cors-headers>=4.9.0",
@@ -10,4 +10,10 @@ dependencies = [
     "djangorestframework>=3.17.1",
     "djangorestframework-stubs>=3.16.9",
     "pillow>=12.2.0",
+    # Production
+    "gunicorn>=23.0.0",
+    "whitenoise>=6.9.0",
+    "dj-database-url>=2.3.0",
+    "psycopg2-binary>=2.9.10",
+    "python-decouple>=3.8",
 ]
