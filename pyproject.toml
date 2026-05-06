@@ -1,0 +1,13 @@
+[project]
+name = "djangoproject"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "django>=6.0.5",
+    "django-cors-headers>=4.9.0",
+    "django-filter>=25.2",
+    "djangorestframework>=3.17.1",
+    "djangorestframework-stubs>=3.16.9",
+    "pillow>=12.2.0",
+]

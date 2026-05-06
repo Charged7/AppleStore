@@ -1,0 +1,321 @@
+@baseUrl = http://127.0.0.1:8000/api/v1
+@contentType = application/json
+
+# ═══════════════════════════════════════════
+# CATEGORIES
+# ═══════════════════════════════════════════
+
+### Список категорій
+GET {{baseUrl}}/categories/
+
+### Категорія по ID
+GET {{baseUrl}}/categories/1/
+
+
+# ═══════════════════════════════════════════
+# PRODUCTS — GET
+# ═══════════════════════════════════════════
+
+### Всі товари
+GET {{baseUrl}}/products/
+
+### Товар по ID
+GET {{baseUrl}}/products/iphone-16-pro-256gb-black-titanium
+
+### Фільтр по категорії — iPhone
+GET {{baseUrl}}/products/?category=iphone
+
+### Фільтр по категорії — MacBook
+GET {{baseUrl}}/products/?category=macbook
+
+### Фільтр по категорії — iPad
+GET {{baseUrl}}/products/?category=ipad
+
+### Фільтр по категорії — iMac
+GET {{baseUrl}}/products/?category=imac
+
+### Фільтр по категорії — Apple Watch
+GET {{baseUrl}}/products/?category=watch
+
+### Фільтр по категорії — AirPods
+GET {{baseUrl}}/products/?category=airpods
+
+### Фільтр по категорії — Keyboard
+GET {{baseUrl}}/products/?category=keyboard
+
+### Фільтр по категорії — Mouse
+GET {{baseUrl}}/products/?category=mouse
+
+### Пошук по назві
+GET {{baseUrl}}/products/?search=iPhone
+
+### Сортування по ціні (зростання)
+GET {{baseUrl}}/products/?ordering=price
+
+### Сортування по ціні (спадання)
+GET {{baseUrl}}/products/?ordering=-price
+
+### Комбінований фільтр
+GET {{baseUrl}}/products/?category__slug=iphone&ordering=-price&search=Pro
+
+
+# ═══════════════════════════════════════════
+# PRODUCTS — POST
+# ═══════════════════════════════════════════
+
+### Створити iPhone
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "iphone",
+  "name": "iPhone 16 Pro 256GB Black Titanium",
+  "sku": "IPH-16PRO-256-BLK",
+  "price": "54999.00",
+  "old_price": "59999.00",
+  "stock": 10,
+  "description": "iPhone 16 Pro з чіпом A18 Pro",
+  "specs": {
+    "model_name": "iPhone 16 Pro",
+    "color": "Black Titanium",
+    "storage": "256GB",
+    "chip": "A18 Pro",
+    "display_size": "6.30",
+    "display_type": "Super Retina XDR OLED",
+    "ram": "8GB",
+    "main_camera": "48 MP Triple",
+    "front_camera": "12 MP",
+    "battery_mah": 3582,
+    "has_5g": true,
+    "has_esim": true
+  }
+}
+
+###
+
+### Створити iPad
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "ipad",
+  "name": "iPad Pro 13 M4 256GB Space Black",
+  "sku": "IPAD-PRO13-M4-256-SB",
+  "price": "49999.00",
+  "stock": 5,
+  "description": "iPad Pro 13 дюймів з чіпом M4",
+  "specs": {
+    "line": "iPad Pro",
+    "model_name": "iPad Pro 13 M4",
+    "color": "Space Black",
+    "storage": "256GB",
+    "chip": "M4",
+    "display_size": "13.00",
+    "display_type": "Ultra Retina XDR OLED",
+    "ram": "16GB",
+    "has_cellular": false,
+    "has_pencil": true,
+    "pencil_gen": "Apple Pencil Pro",
+    "battery_hours": 10
+  }
+}
+
+###
+
+### Створити MacBook
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "macbook",
+  "name": "MacBook Air 13 M4 16GB 256GB Midnight",
+  "sku": "MBA-13-M4-16-256-MID",
+  "price": "44999.00",
+  "stock": 8,
+  "description": "MacBook Air 13 з чіпом M4",
+  "specs": {
+    "line": "MacBook Air",
+    "color": "Midnight",
+    "chip": "M4",
+    "cpu_cores": 10,
+    "gpu_cores": 10,
+    "ram": "16GB",
+    "storage": "256GB",
+    "display_size": "13.60",
+    "display_type": "Liquid Retina",
+    "battery_hours": 18,
+    "has_touch_id": true
+  }
+}
+
+###
+
+### Створити iMac
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "imac",
+  "name": "iMac 24 M4 16GB 256GB Blue",
+  "sku": "IMAC-24-M4-16-256-BLU",
+  "price": "74999.00",
+  "stock": 3,
+  "description": "iMac 24 дюйми з чіпом M4",
+  "specs": {
+    "color": "Blue",
+    "chip": "M4",
+    "cpu_cores": 10,
+    "gpu_cores": 10,
+    "ram": "16GB",
+    "storage": "256GB",
+    "display_size": "24.00",
+    "resolution": "4480 x 2520",
+    "camera_mp": 12
+  }
+}
+
+###
+
+### Створити Apple Watch
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "watch",
+  "name": "Apple Watch Series 10 42mm Black Aluminum",
+  "sku": "AW-S10-42-BLK-ALU",
+  "price": "14999.00",
+  "stock": 15,
+  "description": "Apple Watch Series 10, 42 мм",
+  "specs": {
+    "line": "Series",
+    "generation": "Series 10",
+    "color": "Black",
+    "band_color": "Black",
+    "band_material": "Sport Band",
+    "case_size_mm": 42,
+    "case_material": "Aluminum",
+    "has_cellular": false,
+    "chip": "S10",
+    "battery_hours": 18,
+    "water_resist": "50m"
+  }
+}
+
+###
+
+### Створити AirPods
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "airpods",
+  "name": "AirPods Pro 2 USB-C White",
+  "sku": "APP-2-USBC-WHT",
+  "price": "9999.00",
+  "stock": 20,
+  "description": "AirPods Pro 2-го покоління з USB-C",
+  "specs": {
+    "line": "AirPods Pro",
+    "generation": "2nd generation",
+    "color": "White",
+    "has_anc": true,
+    "has_transparency": true,
+    "chip": "H2",
+    "battery_earbuds": 6,
+    "battery_case": 30,
+    "case_connector": "USB-C",
+    "is_wireless_charge": true
+  }
+}
+
+###
+
+### Створити Keyboard
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "keyboard",
+  "name": "Magic Keyboard with Touch ID UA Silver",
+  "sku": "MK-TOUCHID-UA-SLV",
+  "price": "3999.00",
+  "stock": 12,
+  "description": "Magic Keyboard з Touch ID, українська розкладка",
+  "specs": {
+    "model_name": "Magic Keyboard",
+    "color": "Silver",
+    "layout": "UA",
+    "connection": "Wireless",
+    "has_touch_id": true,
+    "has_numpad": false,
+    "battery_months": 1
+  }
+}
+
+###
+
+### Створити Mouse
+POST {{baseUrl}}/products/
+Content-Type: {{contentType}}
+
+{
+  "category": "mouse",
+  "name": "Magic Mouse Silver",
+  "sku": "MM-SLV",
+  "price": "2999.00",
+  "stock": 18,
+  "description": "Magic Mouse з Multi-Touch поверхнею",
+  "specs": {
+    "model_name": "Magic Mouse",
+    "color": "Silver",
+    "connection": "Wireless",
+    "has_multi_touch": true,
+    "battery_months": 1,
+    "charge_port": "USB-C"
+  }
+}
+
+
+# ═══════════════════════════════════════════
+# PRODUCTS — PUT / PATCH / DELETE
+# ═══════════════════════════════════════════
+
+### Оновити товар повністю (PUT)
+PUT {{baseUrl}}/products/iphone-16-pro-256gb-black-titanium/
+Content-Type: {{contentType}}
+
+{
+  "category": "iphone",
+  "name": "iPhone 16 Pro 512GB Black Titanium",
+  "sku": "IPH-16PRO-512-BLK",
+  "price": "64999.00",
+  "stock": 5,
+  "description": "Оновлений опис"
+}
+
+###
+
+### Частково оновити ціну (PATCH)
+PATCH {{baseUrl}}/products/iphone-16-pro-256gb-black-titanium/
+Content-Type: {{contentType}}
+
+{
+  "price": "49999.00",
+  "old_price": "54999.00"
+}
+
+###
+
+### Деактивувати товар (PATCH)
+PATCH {{baseUrl}}/products/iphone-16-pro-256gb-black-titanium/
+Content-Type: {{contentType}}
+
+{
+  "is_active": false
+}
+
+###
+
+### Видалити товар
+DELETE {{baseUrl}}/products/iphone-16-pro-256gb-black-titanium/
