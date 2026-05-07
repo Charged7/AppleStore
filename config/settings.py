@@ -73,19 +73,11 @@ TEMPLATES = [
 # On Render, DATABASE_URL is injected automatically from the linked PostgreSQL service.
 # Locally, falls back to SQLite when DATABASE_URL is not set.
 
-DATABASE_URL = config('DATABASE_URL', default=None)
-
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default='sqlite:///db.sqlite3')
+    )
+}
 
 # ─── Password Validation ──────────────────────────────────────────────────────
 
