@@ -77,22 +77,25 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_specs(obj):
-        if obj.category.slug == "iphone":
-            return IPhoneSpecSerializer(obj.iphone_spec).data
-        if obj.category.slug == "ipad":
-            return IPadSpecSerializer(obj.ipad_spec).data
-        if obj.category.slug == "macbook":
-            return MacBookSpecSerializer(obj.macbook_spec).data
-        if obj.category.slug == "imac":
-            return IMacSpecSerializer(obj.imac_spec).data
-        if obj.category.slug == "watch":
-            return AppleWatchSpecSerializer(obj.watch_spec).data
-        if obj.category.slug == "airpods":
-            return AirPodsSpecSerializer(obj.airpods_spec).data
-        if obj.category.slug == "keyboard":
-            return AppleKeyboardSpecSerializer(obj.keyboard_spec).data
-        if obj.category.slug == "mouse":
-            return AppleMouseSpecSerializer(obj.mouse_spec).data
+        try:
+            if obj.category == "iphone":
+                return IPhoneSpecSerializer(obj.iphone_spec).data
+            if obj.category == "ipad":
+                return IPadSpecSerializer(obj.ipad_spec).data
+            if obj.category == "macbook":
+                return MacBookSpecSerializer(obj.macbook_spec).data
+            if obj.category == "imac":
+                return IMacSpecSerializer(obj.imac_spec).data
+            if obj.category == "watch":
+                return AppleWatchSpecSerializer(obj.watch_spec).data
+            if obj.category == "airpods":
+                return AirPodsSpecSerializer(obj.airpods_spec).data
+            if obj.category == "keyboard":
+                return AppleKeyboardSpecSerializer(obj.keyboard_spec).data
+            if obj.category == "mouse":
+                return AppleMouseSpecSerializer(obj.mouse_spec).data
+        except Exception:
+            return None
         return None
 
 
