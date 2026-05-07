@@ -77,21 +77,21 @@ class ProductSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_specs(obj):
-        if obj.category == "iphone":
+        if obj.category.slug == "iphone":
             return IPhoneSpecSerializer(obj.iphone_spec).data
-        if obj.category == "ipad":
+        if obj.category.slug == "ipad":
             return IPadSpecSerializer(obj.ipad_spec).data
-        if obj.category == "macbook":
+        if obj.category.slug == "macbook":
             return MacBookSpecSerializer(obj.macbook_spec).data
-        if obj.category == "imac":
+        if obj.category.slug == "imac":
             return IMacSpecSerializer(obj.imac_spec).data
-        if obj.category == "watch":
+        if obj.category.slug == "watch":
             return AppleWatchSpecSerializer(obj.watch_spec).data
-        if obj.category == "airpods":
+        if obj.category.slug == "airpods":
             return AirPodsSpecSerializer(obj.airpods_spec).data
-        if obj.category == "keyboard":
+        if obj.category.slug == "keyboard":
             return AppleKeyboardSpecSerializer(obj.keyboard_spec).data
-        if obj.category == "mouse":
+        if obj.category.slug == "mouse":
             return AppleMouseSpecSerializer(obj.mouse_spec).data
         return None
 
@@ -110,21 +110,21 @@ class ProductCreateSerializer(serializers.ModelSerializer):
         specs_data = validated_data.pop("specs")
         product = Product.objects.create(**validated_data)
 
-        if product.category == "iphone":
+        if product.category.slug == "iphone":
             IPhoneSpec.objects.create(product=product, **specs_data)
-        elif product.category == "ipad":
+        elif product.category.slug == "ipad":
             IPadSpec.objects.create(product=product, **specs_data)
-        elif product.category == "macbook":
+        elif product.category.slug == "macbook":
             MacBookSpec.objects.create(product=product, **specs_data)
-        elif product.category == "imac":
+        elif product.category.slug == "imac":
             IMacSpec.objects.create(product=product, **specs_data)
-        elif product.category == "watch":
+        elif product.category.slug == "watch":
             AppleWatchSpec.objects.create(product=product, **specs_data)
-        elif product.category == "airpods":
+        elif product.category.slug == "airpods":
             AirPodsSpec.objects.create(product=product, **specs_data)
-        elif product.category == "keyboard":
+        elif product.category.slug == "keyboard":
             AppleKeyboardSpec.objects.create(product=product, **specs_data)
-        elif product.category == "mouse":
+        elif product.category.slug == "mouse":
             AppleMouseSpec.objects.create(product=product, **specs_data)
 
         return product
