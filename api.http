@@ -19,7 +19,7 @@ GET {{baseUrl}}/products/?search=iPhone
 GET {{baseUrl}}/products/?color=Silver&storage=256GB&min_price=40000&max_price=70000&in_stock=true
 
 ### Filter by dynamic attributes
-GET {{baseUrl}}/products/?attr_chip=A19 Pro
+GET {{baseUrl}}/products/?attr_chip=A19%20Pro
 
 ### Sort by lowest variant price
 GET {{baseUrl}}/products/?ordering=price
@@ -93,6 +93,8 @@ Content-Type: {{contentType}}
   ]
 }
 
+
+###
 
 # UPDATE / DELETE
 
