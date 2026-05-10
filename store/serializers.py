@@ -1,133 +1,112 @@
 from rest_framework import serializers
-from .models import (
-    Product, ProductImage,
-    IPhoneSpec, IPadSpec, MacBookSpec, IMacSpec,
-    AppleWatchSpec, AirPodsSpec, AppleKeyboardSpec, AppleMouseSpec,
-)
+from django.db import transaction
+from .models import Product, ProductVariant, ProductAttribute, ProductImage
 
-
-# ───────────────────────────────────────────
-# SPEC SERIALIZERS
-# ───────────────────────────────────────────
-
-class BaseSpecSerializer(serializers.ModelSerializer):
-    class Meta:
-        exclude = ["id", "product"]
-
-class IPhoneSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = IPhoneSpec
-
-class IPadSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = IPadSpec
-
-class MacBookSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = MacBookSpec
-
-class IMacSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = IMacSpec
-
-class AppleWatchSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = AppleWatchSpec
-
-class AirPodsSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = AirPodsSpec
-
-class AppleKeyboardSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = AppleKeyboardSpec
-
-class AppleMouseSpecSerializer(BaseSpecSerializer):
-    class Meta(BaseSpecSerializer.Meta):
-        model = AppleMouseSpec
-
-
-# ───────────────────────────────────────────
-# ДОПОМІЖНІ СЕРІАЛІЗАТОРИ
-# ───────────────────────────────────────────
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
-        fields = ["id", "image", "alt", "is_main", "order"]
+        fields = [
+            "id",
+            "image",
+            "alt",
+            "is_main",
+            "order"
+        ]
 
 
-# ───────────────────────────────────────────
-# ГОЛОВНИЙ СЕРІАЛІЗАТОР ПРОДУКТУ
-# ───────────────────────────────────────────
+class ProductAttributeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductAttribute
+        fields = ["name", "value"]
+
+
+class ProductVariantSerializer(serializers.ModelSerializer):
+    images = ProductImageSerializer(many=True, read_only=True)
+    attributes = serializers.SerializerMethodField()
+    discount_percent = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ProductVariant
+        fields = [
+            "id",
+            "color",
+            "storage",
+            "price",
+            "old_price",
+            "stock",
+            "discount_percent",
+            "images",
+            "attributes",
+        ]
+
+    # API повертає чистіший вигляд
+    # attributes": { "chip": "A19 Pro", "ram": "8GB" }
+    @staticmethod
+    def get_attributes(obj):
+        return {
+            attribute.name: attribute.value
+            for attribute in obj.attributes.all()
+        }
+
 
 class ProductSerializer(serializers.ModelSerializer):
-    images = ProductImageSerializer(many=True, read_only=True)
-    discount_percent = serializers.IntegerField(read_only=True)
-    specs = serializers.SerializerMethodField()
+    variants = ProductVariantSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
         fields = [
-            "id", "category", "name", "slug", "sku",
-            "price", "old_price", "discount_percent",
-            "stock", "is_active", "description",
-            "images", "specs", "created_at", "updated_at",
+            "id",
+            "category",
+            "name",
+            "slug",
+            "description",
+            "is_active",
+            "created_at",
+            "updated_at",
+            "variants",
         ]
 
-    @staticmethod
-    def get_specs(obj):
-        try:
-            if obj.category == "iphone":
-                return IPhoneSpecSerializer(obj.iphone_spec).data
-            if obj.category == "ipad":
-                return IPadSpecSerializer(obj.ipad_spec).data
-            if obj.category == "macbook":
-                return MacBookSpecSerializer(obj.macbook_spec).data
-            if obj.category == "imac":
-                return IMacSpecSerializer(obj.imac_spec).data
-            if obj.category == "watch":
-                return AppleWatchSpecSerializer(obj.watch_spec).data
-            if obj.category == "airpods":
-                return AirPodsSpecSerializer(obj.airpods_spec).data
-            if obj.category == "keyboard":
-                return AppleKeyboardSpecSerializer(obj.keyboard_spec).data
-            if obj.category == "mouse":
-                return AppleMouseSpecSerializer(obj.mouse_spec).data
-        except Exception:
-            return None
-        return None
+
+class ProductVariantCreateSerializer(serializers.ModelSerializer):
+    attributes = ProductAttributeSerializer(many=True, required=False)
+
+    class Meta:
+        model = ProductVariant
+        fields = [
+            "color",
+            "storage",
+            "price",
+            "old_price",
+            "stock",
+            "attributes",
+        ]
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
-    specs = serializers.JSONField(write_only=True)
+    variants = ProductVariantCreateSerializer(many=True, required=False)
 
     class Meta:
         model = Product
-        fields = [
-            "category", "name", "sku", "price",
-            "old_price", "stock", "description", "specs"
-        ]
+        fields = ["category", "name", "description", "is_active", "variants"]
 
+    @transaction.atomic
     def create(self, validated_data):
-        specs_data = validated_data.pop("specs")
+        variants_data = validated_data.pop("variants", [])
         product = Product.objects.create(**validated_data)
 
-        if product.category.slug == "iphone":
-            IPhoneSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "ipad":
-            IPadSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "macbook":
-            MacBookSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "imac":
-            IMacSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "watch":
-            AppleWatchSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "airpods":
-            AirPodsSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "keyboard":
-            AppleKeyboardSpec.objects.create(product=product, **specs_data)
-        elif product.category.slug == "mouse":
-            AppleMouseSpec.objects.create(product=product, **specs_data)
+        for variant_data in variants_data:
+            attributes_data = variant_data.pop("attributes", [])
+            variant = ProductVariant.objects.create(
+                product=product,
+                **variant_data,
+            )
+            ProductAttribute.objects.bulk_create([
+                ProductAttribute(variant=variant, **attribute_data)
+                for attribute_data in attributes_data
+            ])
 
         return product
+
+    def to_representation(self, instance):
+        return ProductSerializer(instance, context=self.context).data

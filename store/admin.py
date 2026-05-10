@@ -1,17 +1,56 @@
 from django.contrib import admin
 from .models import (
-    Product, ProductImage,
-    IPhoneSpec, IPadSpec, MacBookSpec, IMacSpec,
-    AppleWatchSpec, AirPodsSpec, AppleKeyboardSpec, AppleMouseSpec,
+    Product,
+    ProductVariant,
+    ProductAttribute,
+    ProductImage,
 )
 
-admin.site.register(Product)
-admin.site.register(ProductImage)
-admin.site.register(IPhoneSpec)
-admin.site.register(IPadSpec)
-admin.site.register(MacBookSpec)
-admin.site.register(IMacSpec)
-admin.site.register(AppleWatchSpec)
-admin.site.register(AirPodsSpec)
-admin.site.register(AppleKeyboardSpec)
-admin.site.register(AppleMouseSpec)
+
+class ProductVariantInline(admin.TabularInline):
+    model = ProductVariant
+    extra = 1
+    fields = ("color", "storage", "price", "old_price", "stock")
+
+
+class ProductAttributeInline(admin.TabularInline):
+    model = ProductAttribute
+    extra = 1
+    fields = ("name", "value")
+
+
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    extra = 1
+    fields = ("image", "alt", "is_main", "order")
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("name", "category", "is_active", "created_at")
+    list_filter = ("category", "is_active")
+    search_fields = ("name", "description")
+    prepopulated_fields = {"slug": ("name",)}
+    inlines = [ProductVariantInline]
+
+
+@admin.register(ProductVariant)
+class ProductVariantAdmin(admin.ModelAdmin):
+    list_display = ("product", "color", "storage", "price", "stock")
+    list_filter = ("product__category", "storage", "color")
+    search_fields = ("product__name", "color", "storage")
+    inlines = [ProductAttributeInline, ProductImageInline]
+
+
+@admin.register(ProductAttribute)
+class ProductAttributeAdmin(admin.ModelAdmin):
+    list_display = ("variant", "name", "value")
+    list_filter = ("name",)
+    search_fields = ("variant__product__name", "name", "value")
+
+
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ("variant", "alt", "is_main", "order")
+    list_filter = ("is_main",)
+    search_fields = ("variant__product__name", "alt")
