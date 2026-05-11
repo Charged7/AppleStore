@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
+from drf_spectacular.utils import extend_schema_field
 from .models import Product, ProductVariant, ProductAttribute, ProductImage
 
 
@@ -42,8 +43,8 @@ class ProductVariantSerializer(serializers.ModelSerializer):
 
     # API повертає чистіший вигляд
     # attributes": { "chip": "A19 Pro", "ram": "8GB" }
-    @staticmethod
-    def get_attributes(obj):
+    @extend_schema_field(serializers.DictField(child=serializers.CharField()))
+    def get_attributes(self, obj):
         return {
             attribute.name: attribute.value
             for attribute in obj.attributes.all()

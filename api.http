@@ -1,5 +1,15 @@
 @baseUrl = http://127.0.0.1:8000/api/v1
+@rootUrl = http://127.0.0.1:8000
 @contentType = application/json
+
+# API DOCS
+
+### Swagger UI
+GET {{rootUrl}}/api/docs/
+
+### OpenAPI schema
+GET {{rootUrl}}/api/schema/
+
 
 # PRODUCTS
 

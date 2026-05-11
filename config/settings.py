@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'drf_spectacular',
     'store',
 ]
 
@@ -115,8 +116,21 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # ─── REST Framework ───────────────────────────────────────────────────────────
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+}
+
+# ─── API Documentation ────────────────────────────────────────────────────────
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Apple Store API',
+    'DESCRIPTION': (
+        'Django REST Framework backend for Apple products. '
+        'Products contain variants with prices, stock, images, and flexible attributes.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 # ─── Misc ─────────────────────────────────────────────────────────────────────

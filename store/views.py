@@ -1,9 +1,36 @@
 from django.db.models import Min, Sum
 from django_filters import rest_framework as django_filters
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
+from drf_spectacular.utils import extend_schema_view
 from rest_framework import filters
 from rest_framework import viewsets
 from .models import Product
 from .serializers import ProductSerializer, ProductCreateSerializer
+
+
+ATTRIBUTE_FILTER_PARAMETERS = [
+    OpenApiParameter(
+        name="attr_chip",
+        type=OpenApiTypes.STR,
+        location=OpenApiParameter.QUERY,
+        required=False,
+        description="Example dynamic attribute filter. Any attr_* query parameter is supported.",
+    ),
+    OpenApiParameter(
+        name="attr_ram",
+        type=OpenApiTypes.STR,
+        location=OpenApiParameter.QUERY,
+        required=False,
+        description="Example dynamic attribute filter. Any attr_* query parameter is supported.",
+    ),
+    OpenApiParameter(
+        name="attr_display_size",
+        type=OpenApiTypes.STR,
+        location=OpenApiParameter.QUERY,
+        required=False,
+        description="Example dynamic attribute filter. Any attr_* query parameter is supported.",
+    ),
+]
 
 
 class ProductFilter(django_filters.FilterSet):
@@ -41,6 +68,33 @@ class ProductFilter(django_filters.FilterSet):
         return queryset
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="List products",
+        description=(
+            "Returns active products with nested variants, images, and attributes. "
+            "Supports category, color, storage, price range, stock, search, ordering, "
+            "and dynamic attr_* filters."
+        ),
+        parameters=ATTRIBUTE_FILTER_PARAMETERS,
+        tags=["products"],
+    ),
+    retrieve=extend_schema(
+        summary="Retrieve product by slug",
+        description="Returns one product with all variants, prices, stock, images, and attributes.",
+        tags=["products"],
+    ),
+    create=extend_schema(
+        summary="Create product",
+        description="Creates a product with optional nested variants and variant attributes.",
+        request=ProductCreateSerializer,
+        responses=ProductSerializer,
+        tags=["products"],
+    ),
+    update=extend_schema(summary="Replace product", tags=["products"]),
+    partial_update=extend_schema(summary="Partially update product", tags=["products"]),
+    destroy=extend_schema(summary="Delete product", tags=["products"]),
+)
 class ProductViewSet(viewsets.ModelViewSet):
     lookup_field = "slug"
     filter_backends = [
