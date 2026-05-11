@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
-from .models import Product, ProductVariant, ProductAttribute, ProductImage
+from .models import Product, ProductVariant, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -14,12 +13,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
             "is_main",
             "order"
         ]
-
-
-class ProductAttributeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductAttribute
-        fields = ["name", "value"]
 
 
 class ProductVariantSerializer(serializers.ModelSerializer):
@@ -67,47 +60,3 @@ class ProductSerializer(serializers.ModelSerializer):
             "updated_at",
             "variants",
         ]
-
-
-class ProductVariantCreateSerializer(serializers.ModelSerializer):
-    attributes = ProductAttributeSerializer(many=True, required=False)
-
-    class Meta:
-        model = ProductVariant
-        fields = [
-            "color",
-            "storage",
-            "price",
-            "old_price",
-            "stock",
-            "attributes",
-        ]
-
-
-class ProductCreateSerializer(serializers.ModelSerializer):
-    variants = ProductVariantCreateSerializer(many=True, required=False)
-
-    class Meta:
-        model = Product
-        fields = ["category", "name", "description", "is_active", "variants"]
-
-    @transaction.atomic
-    def create(self, validated_data):
-        variants_data = validated_data.pop("variants", [])
-        product = Product.objects.create(**validated_data)
-
-        for variant_data in variants_data:
-            attributes_data = variant_data.pop("attributes", [])
-            variant = ProductVariant.objects.create(
-                product=product,
-                **variant_data,
-            )
-            ProductAttribute.objects.bulk_create([
-                ProductAttribute(variant=variant, **attribute_data)
-                for attribute_data in attributes_data
-            ])
-
-        return product
-
-    def to_representation(self, instance):
-        return ProductSerializer(instance, context=self.context).data

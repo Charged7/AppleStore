@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema_view
 from rest_framework import filters
 from rest_framework import viewsets
 from .models import Product
-from .serializers import ProductSerializer, ProductCreateSerializer
+from .serializers import ProductSerializer
 
 
 ATTRIBUTE_FILTER_PARAMETERS = [
@@ -84,18 +84,8 @@ class ProductFilter(django_filters.FilterSet):
         description="Returns one product with all variants, prices, stock, images, and attributes.",
         tags=["products"],
     ),
-    create=extend_schema(
-        summary="Create product",
-        description="Creates a product with optional nested variants and variant attributes.",
-        request=ProductCreateSerializer,
-        responses=ProductSerializer,
-        tags=["products"],
-    ),
-    update=extend_schema(summary="Replace product", tags=["products"]),
-    partial_update=extend_schema(summary="Partially update product", tags=["products"]),
-    destroy=extend_schema(summary="Delete product", tags=["products"]),
 )
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "slug"
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -136,7 +126,4 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         return queryset.distinct()
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return ProductCreateSerializer
-        return ProductSerializer
+    serializer_class = ProductSerializer
