@@ -25,8 +25,14 @@ GET {{baseUrl}}/products/?category=iphone
 ### Search by product text and variant attributes
 GET {{baseUrl}}/products/?search=iPhone
 
+### Filter by model name
+GET {{baseUrl}}/products/?model=iPhone%2015%20Pro
+
 ### Filter by variant fields
 GET {{baseUrl}}/products/?color=Silver&storage=256GB&min_price=40000&max_price=70000&in_stock=true
+
+### Filter by RAM and SIM attributes
+GET {{baseUrl}}/products/?ram=8GB&sim=eSIM
 
 ### Filter by dynamic attributes
 GET {{baseUrl}}/products/?attr_chip=A19%20Pro
@@ -36,3 +42,27 @@ GET {{baseUrl}}/products/?ordering=price
 
 ### Sort by newest products
 GET {{baseUrl}}/products/?ordering=-created_at
+
+
+# VARIANT CARDS
+
+### List variants as separate catalog cards
+GET {{baseUrl}}/variants/
+
+### List new variant cards
+GET {{baseUrl}}/variants/?is_new=true
+
+### Variant detail by slug
+GET {{baseUrl}}/variants/iphone-17-pro-max-256gb-cosmic-orange/
+
+### Filter variant cards by model
+GET {{baseUrl}}/variants/?category=iphone&model=iPhone%2017%20Pro%20Max
+
+### Filter variant cards by color and storage
+GET {{baseUrl}}/variants/?category=iphone&color=Cosmic%20Orange&storage=256GB
+
+### Filter variant cards by RAM and SIM
+GET {{baseUrl}}/variants/?category=iphone&ram=12GB&sim=eSIM
+
+### Sort variant cards by lowest price
+GET {{baseUrl}}/variants/?category=iphone&ordering=price

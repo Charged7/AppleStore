@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 
@@ -95,6 +96,12 @@ class ProductVariant(models.Model):
         verbose_name="Пам'ять"
     )
 
+    slug = models.SlugField(
+        unique=True,
+        max_length=255,
+        blank=True
+    )
+
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -114,6 +121,17 @@ class ProductVariant(models.Model):
         verbose_name="Залишок"
     )
 
+    is_new = models.BooleanField(
+        default=False,
+        verbose_name="Новинка"
+    )
+
+    new_until = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Новинка до"
+    )
+
     class Meta:
         verbose_name = "Варіант товару"
         verbose_name_plural = "Варіанти товару"
@@ -121,11 +139,37 @@ class ProductVariant(models.Model):
     def __str__(self):
         return f"{self.product.name} | {self.color} | {self.storage}"
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(
+                " ".join(
+                    part
+                    for part in [self.product.name, self.storage, self.color]
+                    if part
+                )
+            )
+            slug = base_slug
+            counter = 2
+
+            while ProductVariant.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
     @property
     def discount_percent(self):
         if self.old_price and self.old_price > self.price:
             return int((1 - self.price / self.old_price) * 100)
         return 0
+
+    @property
+    def is_new_active(self):
+        return self.is_new and (
+            self.new_until is None or self.new_until >= timezone.now()
+        )
 
 
 # ─────────────────────────────────────

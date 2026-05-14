@@ -10,7 +10,7 @@ from .models import (
 class ProductVariantInline(admin.TabularInline):
     model = ProductVariant
     extra = 1
-    fields = ("color", "storage", "price", "old_price", "stock")
+    fields = ("color", "storage", "price", "old_price", "stock", "is_new", "new_until")
 
 
 class ProductAttributeInline(admin.TabularInline):
@@ -36,9 +36,19 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ProductVariant)
 class ProductVariantAdmin(admin.ModelAdmin):
-    list_display = ("product", "color", "storage", "price", "stock")
-    list_filter = ("product__category", "storage", "color")
-    search_fields = ("product__name", "color", "storage")
+    list_display = (
+        "product",
+        "slug",
+        "color",
+        "storage",
+        "price",
+        "stock",
+        "is_new",
+        "new_until",
+    )
+    list_filter = ("product__category", "storage", "color", "is_new")
+    search_fields = ("product__name", "slug", "color", "storage")
+    readonly_fields = ("slug",)
     inlines = [ProductAttributeInline, ProductImageInline]
 
 
