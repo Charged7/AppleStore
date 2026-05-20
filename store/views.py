@@ -188,13 +188,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         filters.OrderingFilter,
     ]
     filterset_class = ProductFilter
-    search_fields = [
-        "name",
-        "description",
-        "variants__color",
-        "variants__storage",
-        "variants__attributes__value",
-    ]
+    search_fields = ["name"]
     ordering_fields = ["name", "created_at", "price", "stock"]
     ordering = ["-created_at"]
 
@@ -254,10 +248,6 @@ class ProductVariantViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = ProductVariantFilter
     search_fields = [
         "product__name",
-        "product__description",
-        "color",
-        "storage",
-        "attributes__value",
     ]
     ordering_fields = ["product__name", "price", "stock", "storage", "color"]
     ordering = ["product__name", "storage", "color"]

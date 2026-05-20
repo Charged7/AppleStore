@@ -104,13 +104,13 @@ class ProductVariant(models.Model):
 
     price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         verbose_name="Ціна"
     )
 
     old_price = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         null=True,
         blank=True,
         verbose_name="Стара ціна"
